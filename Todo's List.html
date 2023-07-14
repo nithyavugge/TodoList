@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        .form-control {
+            display: inline;
+            width: 45%;
+        }
+        
+        * {
+            padding: 1%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center">To-Do List</h1>
+    <form>
+        <h3>Hey!! What's On Your Todo</h3>
+        <input id="todoadd" class="form-control" type="text" placeholder="e.g. Playing Football">
+        <input id="todosubmit" class="btn btn-primary" type="submit" value="Submit ToDo">
+        <div class="container">
+            <br>
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Task</th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Editor</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+                    <tr>
+                        <th scope="row">1.</th>
+                        <td id="todo1">SQL &amp; DBMS CSE</td>
+                        <td><button type="button" class="btn btn-outline-danger" id="delete1" onclick="myDelete(1)">Delete</button></td>
+                        <td>
+
+                            <input class="form-control" type="text" placeholder="Edit SQL &amp; DBMS CSE" id="todoedit1">
+                            <input type="submit" class="btn btn-outline-success" onclick="myEdit(1)" id="edit1" value="Edit">
+
+                        </td>
+                </tbody>
+            </table>
+        </div>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script>
+        var txtElement = document.getElementById("todoadd");
+        todosubmit.addEventListener("click", func);
+        display();
+
+        function func() {
+            // localStorageEle = localStorage.getItem(arr);
+            // localStorageEle.push(txtElement.value);
+            // localStorage.setItem('xyz', "localStorageEle");
+            // console.log(localStorage.getItem('arr'))
+            // console.log(txtElement.value)
+            if (txtElement.value == "") {
+                alert("Give a valide Task Name");
+            } else if (localStorage.length === 0) {
+                var localArray = [];
+                localArray.push(txtElement.value);
+                // console.log(localArray)
+                localStorage.setItem("arr", JSON.stringify(localArray));
+            } else {
+                var localArray = JSON.parse(localStorage.getItem("arr"));
+                localArray.push(txtElement.value);
+                localStorage.setItem("arr", JSON.stringify(localArray));
+            }
+        }
+
+        function display() {
+            var localArray = JSON.parse(localStorage.getItem("arr"));
+            console.log(localArray);
+            const tableTag = document.getElementById("tablebody");
+            let ans = "";
+            let cnt = 1;
+            localArray.map((val) => {
+                var date = new Date();
+                var current_date =
+                    date.getDate() +
+                    "-" +
+                    (date.getMonth() + 1) +
+                    "-" +
+                    date.getFullYear();
+                ans += `<tr>
+                 <th scope="row">${cnt}.</th>
+                 <td id="todo${cnt}">${val}</td>
+                 <td><button type="button" class="btn btn-outline-danger" id="delete${cnt}" onclick="myDelete(${cnt})">Delete</button></td>
+                 <td> 
+                <form>
+                <input class="form-control" type="text" placeholder="Edit ${val}" id="todoedit${cnt}" />
+                <input type="submit" class="btn btn-outline-success" onclick="myEdit(${cnt})" id="edit${cnt}" value="Edit" />
+            </form>
+                </td>
+                <td>
+                    ${current_date}
+                </td>
+                 </tr>`;
+                cnt++;
+            });
+            tableTag.innerHTML = ans;
+        }
+
+        function myDelete(cnt) {
+            let s = "todo";
+            s = s + cnt;
+            const todelete = document.getElementById(s).innerHTML;
+            var localArray = JSON.parse(localStorage.getItem("arr"));
+            let index = localArray.indexOf(todelete);
+            localArray.splice(index, 1);
+            console.log(localArray);
+            localStorage.setItem("arr", JSON.stringify(localArray));
+            location.reload();
+        }
+
+        function myEdit(cnt) {
+            let s = "todo";
+            s = s + cnt;
+            let r = "todoedit";
+            r = r + cnt;
+            const toedit = document.getElementById(s).innerHTML;
+            console.log(toedit);
+            var localArray = JSON.parse(localStorage.getItem("arr"));
+            let index = localArray.indexOf(toedit);
+            console.log("index", index);
+            let tofinaledit = document.getElementById(r).value;
+            if (tofinaledit === "") {
+                alert("Give a valide Task Name");
+            } else {
+                // console.log(tofinaledit, "tofinaledit");
+                localArray.splice(index, 1);
+                console.log(localArray);
+                localArray.splice(index, 0, tofinaledit);
+                // console.log("Hopes")
+                // console.log(localArray[index]);
+                // console.log(localArray)
+                localStorage.setItem("arr", JSON.stringify(localArray));
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
